@@ -1,0 +1,1030 @@
+
+'
+' generate a random number from between zero and one  ( 0.0 <= R0 < 1.0 )
+'
+
+Sub RND
+  R0 = Math.GetRandomNumber(1000)
+  R0 = R0 - 1
+  R0 = R0 / 1000
+EndSub
+
+'
+' Add a 
+' 
+Sub FNR
+  RND()
+  R = Math.Floor(R0 * (1 + Q2 - Q1) + Q1)
+EndSub
+
+Sub FNX
+  Q1 = -F3
+  Q2 = F3
+  FNR()
+  X = R + RA[Q1]
+EndSub
+
+Sub GaussianRandomNumber
+  FNR()
+  Q3 = R
+  FNR()
+  If R > 5 Then
+    FNR()
+    G0 = Math.Floor((Q3 + R)/2)
+  Else
+    G0 = Q3
+  EndIf
+EndSub
+
+Sub ReadYesNo
+  Done = "false"
+  While (Done <> "true")
+    V = TextWindow.Read()
+    V = Text.GetSubText(V,1,1)
+    If (Text.GetLength(V) = 0) Then
+      V = "N"
+    EndIf
+    V = Text.ConvertToUpperCase(V)
+    If (V = "Y") Or (V = "N") Then
+      Done = "true"
+    Else
+      TextWindow.Write("Please answer yes or no:")
+    EndIf
+  EndWhile
+EndSub
+
+Sub ReadNumericInput
+  Done = "false"
+  While (Done <> "true")
+    V = TextWindow.ReadNumber()
+    If V >= 0 Then
+      Done = "true"
+    Else
+      TextWindow.WriteLine("Please enter a non-negative #:")
+    EndIf
+  EndWhile
+EndSub
+
+Sub OutputPadSpacing
+  j = Stack.PopValue(StackVar)
+  If j >= 0 Then
+    TextWindow.Write(" ")
+  EndIf
+EndSub
+
+Sub InsufficientGrain
+  TextWindow.WriteLine("But you don't have enough grain")
+  TextWindow.Write("You have ")
+  TextWindow.Write(G)
+  TextWindow.WriteLine(" HL. of grain left,")
+  If X1 >= 4 Then
+    TextWindow.Write("Enough to buy ")
+    TextWindow.Write(Math.Floor(G/X1))
+    TextWindow.WriteLine(" HA. of land")
+  Else
+    TextWindow.Write("Enough to plant ")
+    TextWindow.Write(Math.Floor(G/2))
+    TextWindow.WriteLine(" HA. of land")
+  EndIf
+EndSub
+
+Sub InsufficientLand
+  TextWindow.WriteLine("But you don't have enough land")
+  TextWindow.Write("You only have ")
+  TextWindow.Write(L)
+  TextWindow.WriteLine(" HA. of land left")
+EndSub
+
+Sub InsufficientPeasants
+  TextWindow.WriteLine("But you don't have enought peasants")
+  TextWindow.Write("Your peasants can only plant ")
+  TextWindow.Write(4 * P)
+  TextWindow.WriteLine(" HA. of land")
+EndSub
+
+Sub Deposed
+  TextWindow.WriteLine("The peasants are tired of war and starvation")
+  TextWindow.WriteLine("You are deposed")
+EndSub
+
+Sub AbolishedPeasants
+  TextWindow.WriteLine("You have so few peasants left that")
+  TextWindow.WriteLine("the High King has abolished your Ducal")
+  TextWindow.WriteLine("right")
+EndSub
+
+Sub AbolishedLand
+  TextWindow.WriteLine("You have so little land left that")
+  TextWindow.WriteLine("the High King has abolished your Ducal")
+  TextWindow.WriteLine("right")
+EndSub
+  
+InitializeLabel:
+
+  Q1 = 1
+
+  TextWindow.WriteLine("D U K E D O M")
+  TextWindow.WriteLine("")
+  TextWindow.WriteLine("Small Basic Version")
+  TextWindow.WriteLine("")
+
+  F3 = 2
+  M  = 1.95
+
+  TextWindow.Write("Do you want to skip detailed reports ? ")
+  ReadYesNo()
+  RStr = V
+
+  InitializeGlobalVariablesAndArrays()
+  InitializeGlobalTextStringArrays()
+
+  U = 0
+
+  InitializeRandomBaseTable()
+
+LastYearsResultsLabel:
+
+  TextWindow.WriteLine("")
+
+  TextWindow.Write("Year ")
+  TextWindow.Write(Y)
+  TextWindow.Write(" Peasants ")
+  TextWindow.Write(P)
+  TextWindow.Write(" Land ")
+  TextWindow.Write(L)
+  TextWindow.Write(" Grain ")
+  TextWindow.WriteLine(G)
+
+  TextWindow.WriteLine("")
+
+  If RStr = "Y" Then
+    Goto NewYearsDay
+  Endif
+
+  StackVar = 0
+
+  For i = 1 To 8
+    If PA[i] <> 0 Or i = 1 Then
+     TextWindow.Write(PStr[i])
+      Stack.PushValue(StackVar, PA[i])
+      OutputPadSpacing()
+      TextWindow.WriteLine(PA[i])
+    EndIf
+  EndFor
+  
+  TextWindow.Write("Peasants at end      ")
+  Stack.PushValue(StackVar, P)
+  OutputPadSpacing()
+  TextWindow.WriteLine(P)
+
+  TextWindow.WriteLine("")
+
+  For i = 1 To 3
+    If LA[i] <> 0 Or i = 1 Then
+      TextWindow.Write(LStr[i])
+      Stack.PushValue(StackVar, LA[i])
+      OutputPadSpacing()
+      TextWindow.WriteLine(LA[i])
+    EndIf
+  EndFor
+  
+  TextWindow.Write("Land at end of year  ")
+  Stack.PushValue(StackVar, L)
+  OutputPadSpacing()
+  TextWindow.WriteLine(L)
+
+  TextWindow.WriteLine("")
+
+  TextWindow.WriteLine("100% 80%  60%  40%  20%  Depl")
+  For i = 1 To 6
+    TextWindow.Write(SA[i])
+    For j = 1 To (5 - Text.GetLength(SA[i]))
+      TextWindow.Write(" ")
+    EndFor
+  EndFor
+  
+  TextWindow.WriteLine("")
+
+  TextWindow.WriteLine("")
+
+  For i = 1 To 10
+    If GA[i] <> 0 Or i = 1 Then
+      TextWindow.Write(GStr[i])
+      Stack.PushValue(StackVar, GA[i])
+      OutputPadSpacing()
+      TextWindow.WriteLine(GA[i])
+    EndIf
+  EndFor
+  
+  TextWindow.Write("Grain at end of year ")
+  Stack.PushValue(StackVar, G)
+  OutputPadSpacing()
+  TextWindow.WriteLine(G)
+
+  TextWindow.WriteLine("")
+
+  If Y <= 0 Then
+    TextWindow.Write("(Severe crop damage due to seven")
+    TextWindow.WriteLine(" year locusts)")
+  EndIf
+
+NewYearsDay:
+
+  TextWindow.WriteLine("")
+  TextWindow.WriteLine("")
+
+  Y = Y + 1
+
+  For i = 1 To 8
+    PA[i] = 0
+  EndFor
+  For i = 1 To 3
+    LA[i] = 0
+  EndFor
+  For i = 1 To 10
+    GA[i] = 0
+  EndFor
+
+  PA[1] = P
+  LA[1] = L
+  GA[1] = G
+
+  ' Test for End of Game
+  '
+  If P >= 33 Then
+    Goto TooLittleLandCheckLabel
+  Else
+    AbolishedPeasants()
+    Goto PlayAgainLabel
+  EndIf
+
+TooLittleLandCheckLabel:
+
+  If L >= 199 Then
+    Goto DeposedCheckLabel
+  Else
+    AbolishedLand()
+    Goto PlayAgainLabel
+  EndIf
+
+DeposedCheckLabel:
+
+  If U1 > 88 Or U2 > 99 Then
+    Deposed()
+    Goto PlayAgainLabel
+  Else
+    If G >= 429 Then
+      Goto AgeOfRetirementCheckLabel
+    Else
+      Deposed()
+      Goto PlayAgainLabel
+    EndIf
+  EndIf
+
+AgeOfRetirementCheckLabel:
+
+  If Y > 45 And K = 0 Then
+    TextWindow.WriteLine("You have reached the age of retirement")
+    Goto PlayAgainLabel
+  EndIf
+
+  U1 = 0
+
+  If K > 0 Then
+    TextWindow.WriteLine("The King demands twice the royal tax in")
+    TextWindow.WriteLine("the hope to prevoke ware.  Will you pay ? ")
+    ReadYesNo()
+    K = 2
+    If V = "N" Then
+      K = -1
+    EndIf
+  EndIf
+
+GrainForFoodLabel:
+  
+  TextWindow.Write("Grain for food = ")
+  ReadNumericInput()
+  If V >= 100 Then
+    V = -V * -1
+  Else
+    V = -V * P * -1
+  EndIf
+
+  If V > G Then
+    InsufficientGrain()
+    Goto GrainForFoodLabel
+  EndIf
+
+  If Math.Floor(V/P) < 11 And V <> G Then
+    TextWindow.WriteLine("The peasants demonstrate before the")
+    TextWindow.WriteLine("castle with sharpened scythes")
+    Goto GrainForFoodLabel
+  EndIf
+
+  GA[2] = -V
+  G = G + GA[2]
+  X1 = V / P
+  If X1 < 13 Then
+    TextWindow.WriteLine("Some peasants have starved")
+    PA[2] = -Math.Floor(P-V/13)
+    P = P + PA[2]
+  EndIf
+
+  X1 = X1 - 14
+  If X1 <= 4 Then
+    X1 = -X1 * -1
+  Else
+    X1 = -4 * -1
+  EndIf
+
+  U1 = U1 - 3 * PA[2] - 2 * X1
+
+  If (U > 88) Then
+    Deposed()
+    Goto PlayAgainLabel
+  Else
+    If (P < 33) Then
+      AbolishedPeasants()
+      Goto PlayAgainLabel
+    EndIf
+  EndIf
+
+  'LandBuySellLabel:
+
+  C = C1
+  Q1 = 1
+  FNX()
+  X1 = Math.Floor(2 * C + X - 5)
+  If X1 >= 4 Then
+    X1 = -X1 * -1
+  Else
+    X1 = -4 * -1
+  EndIf
+
+LandToBuyLabel:
+
+  TextWindow.Write("Land to buy at ")
+  TextWindow.Write(X1)
+  TextWindow.Write(" HL./HA. = ")
+  ReadNumericInput()
+  GA[3] = -V * X1
+
+  If (-GA[3] > G) Then
+    InsufficientGrain()
+    Goto LandToBuyLabel
+  EndIf
+
+  LA[2] = V
+  SA[3] = SA[3] + V
+  If V > 0 Then
+    Goto LandCheckLabel
+  Else
+    X2 = SA[1] + SA[2] + SA[3]
+  EndIf
+
+  For j1 = 1 To 3
+    X1 = X1 - 1
+    TextWindow.Write("Land to sell at ")
+    TextWindow.Write(X1)
+    TextWindow.Write(" HL./HA. = ")
+    ReadNumericInput()
+    If V > X2 Then
+      TextWindow.Write("But you only have ")
+      TextWindow.Write(X2)
+      TextWindow.Write(" HA. of good land")
+    Else
+      GA[3] = V * X1
+      If GA[3] <= 4000 Then
+        Goto LandSaleCompleteLabel
+      Else
+        TextWindow.WriteLine("No buyers have that much grain try less")
+      EndIf
+    EndIf
+  EndFor
+
+  TextWindow.WriteLine("Buyers have lost interest")
+  V = 0
+  GA[3] = 0
+
+LandSaleCompleteLabel:
+
+  LA[2] = -V
+  For j1 = 3 To 1 Step -1
+    If V <= SA[j1] Then
+      Goto UpdateLandTablesCompleteLabel
+    EndIf
+  
+    V = V - SA[j1]
+    SA[j1] = 0
+  EndFor
+
+  TextWindow.WriteLine("Land selling loop error")
+  Program.End()
+
+UpdateLandTablesCompleteLabel:
+
+  SA[j1] = SA[j1] - V
+
+LandCheckLabel:
+
+  L = L + LA[2]
+
+  If L < 10 Then
+    AbolishedLand()
+    Goto PlayAgainLabel
+  EndIf
+
+  If LA[2] < 0 And X1 < 4 Then
+    GA[3] = Math.Floor(GA[3] / 2)
+    TextWindow.WriteLine("The High King appropriates half")
+    TextWindow.WriteLine("of your earnings as punishment")
+    TextWindow.WriteLine("for selling at such a low price")
+  EndIf
+
+  G = G + GA[3]
+
+  'War with the King
+
+  If K <> -2 Then
+    Goto LandToPlantLabel
+  EndIf
+
+  X1 = Math.Floor(G / 100)
+
+  TextWindow.WriteLine("The King's army is about to attack")
+  TextWindow.WriteLine("your duchy")
+  TextWindow.Write("at 100 HL. each (pay in advance)")
+  TextWindow.Write("You have hired")
+  TextWindow.Write(X1)
+  TextWindow.WriteLine(" foreign mercenaries")
+
+  If ((8 * X1 + P) > 2399) Then
+    Goto YouWinLabel
+  Else
+    Goto YouLostLabel
+  Endif
+
+YouLostLabel:
+
+  TextWindow.WriteLine("Your head is placed atop of the")
+  TextWindow.WriteLine("castle gate.")
+  Goto PlayAgainLabel
+
+YouWinLabel:
+
+  TextWindow.WriteLine("Wipe the blood from the crown - you")
+  TextWindow.WriteLine("are High King! A nearby monarchy")
+  TextWindow.WriteLine("threatens war; how many ....")
+  TextWindow.WriteLine("")
+  Goto PlayAgainLabel
+
+  'Grain Production
+  '
+
+LandToPlantLabel:
+
+  TextWindow.Write("Land to be planted = ")
+  ReadNumericInput()
+
+  If V > L Then
+    InsufficientLand()
+    Goto LandToPlantLabel
+  EndIf
+  
+  If V > 4 * P Then
+    InsufficientPeasants()
+    Goto LandToPlantLabel
+  EndIf
+  
+  GA[4] = -2 * V
+  If -GA[4] > G Then
+    InsufficientGrain()
+    Goto LandToPlantLabel
+  EndIf
+
+  GA[8] = V
+  G = G + GA[4]
+
+  For i = 1 To 6
+    UA[i] = 0
+  EndFor
+  
+  For j1 = 1 To 6
+    If V <= SA[j1] Then
+      UA[j1] = V
+      SA[j1] = SA[j1] - V
+      SA[1] = SA[1] + SA[2]
+      SA[2] = 0
+      Goto CropRotationLabel
+    EndIf
+    V = V - SA[j1]
+    UA[j1] = SA[j1]
+    SA[j1] = 0
+  EndFor
+
+  TextWindow.WriteLine("Land table error")
+  Program.End()
+
+CropRotationLabel:
+
+  For j1 = 3 To 6
+    SA[j1-2] = SA[j1-2] + SA[j1]
+    SA[j1] = 0
+  EndFor
+
+  For j1 = 1 To 5
+    SA[j1+1] = SA[j1+1] + UA[j1]
+  EndFor
+
+  SA[6] = SA[6] + UA[6]
+
+  '  Crop yield and loss
+  '
+  Q1 = 2
+  FNX()
+  C = X + 9
+  If (Math.Floor(Y/7) * 7) = Y Then
+    TextWindow.WriteLine("Seven year locusts")
+    C = Math.Floor(C * 0.65)
+  EndIf
+
+  X1 = 0
+
+  For j1 = 1 To 5
+    X1 = X1 + UA[j1] * (1.2 - 0.2 * j1)
+  EndFor
+  
+  If GA[8] = 0 Then
+    C1 = 0
+    C = 0
+  Else
+    C1 = Math.Floor( (C * (X1 / GA[8])) * 100) / 100
+    C = C1
+  EndIf
+
+  TextWindow.Write("Yield = ")
+  TextWindow.Write(C)
+  TextWindow.WriteLine(" HL./HA")
+
+  Q1 = 3
+  FNX()
+  
+  X1 = X + 3
+  If X1 < 9 Then
+    Goto WarLabel
+  Else
+    GA[5] = -Math.Floor( (X1 * G) / 83 )
+    G = G + GA[5]
+    TextWindow.WriteLine("Rats infest the grainery")
+    
+    If P < 67 Or K = -1 Then
+      Goto WarLabel
+    Else
+      Q1 = 4
+      FNX()
+      
+      X1 = X
+      
+      If X1 > (P / 30) Then
+        Goto WarLabel
+      Else
+        TextWindow.Write("The king requires ")
+        TextWindow.Write(X1)
+        TextWindow.WriteLine(" peasants for")
+        TextWindow.WriteLine("his estate and mines.  Will you supply")
+        TextWindow.Write("them (Y)es or pay ")
+        TextWindow.Write(X1 * 100)
+        TextWindow.WriteLine(" HL. of")
+        TextWindow.Write("grain instead (N)o ? ")
+        ReadYesNo()
+        
+        If V = "N" Then
+          GA[10] = -100 * X1
+          G = G + GA[10]
+        Else
+          PA[3] = -X1
+          P = P + PA[3]  
+        EndIf
+      EndIf
+    EndIf
+  EndIf
+
+WarLabel:
+
+  If K <> -1 Then
+    Goto KingGrowsUneasyLabel
+  Endif
+
+  TextWindow.WriteLine("The High King calls for peasant levies")
+  TextWindow.WriteLine("and hires many foreign mercenaries")
+  K = -2
+  Goto NeighborWarCheckLabel
+
+KingGrowsUneasyLabel:
+
+  X1 = Math.Floor(11 - 1.5 * C)
+  If (X1 >=2) Then
+    X1 = -X1 * -1
+  Else
+    X1 = -2 * -1
+  Endif
+
+  If (K <> 0) Or (P <= 109) Or ((17 * (L-400) + G) <= 10600) Then
+    Goto OkayWithTheKingLabel
+  Endif
+
+  TextWindow.WriteLine("The High King grows uneasy and may")
+  TextWindow.WriteLine("be subidizing wars against you")
+  X1 = X1 + 2
+  X2 = Y + 5
+  Goto NeighborWarCheckLabel
+
+OkayWithTheKingLabel:
+
+  X2 = 0
+
+NeighborWarCheckLabel:
+
+  Q1 = 5
+  FNX()
+  
+  X3 = X
+  
+  If X3 > X1 Then
+    Goto DiseaseCheckLabel
+  EndIf
+
+  TextWindow.WriteLine("A nearby Duke threatens war; ")
+
+  Q1 = 6
+  FNX()
+  
+  X2 = Math.Floor(X2 + 85 + 18 * X)
+  X4 = 1.2 - U1 / 16
+  X5 = Math.Floor(P * X4) + 13
+  
+  TextWindow.Write("Will you attack first ? ")
+  ReadYesNo()
+  
+  If V = "Y" Then
+    Goto HireMercenariesCheckLabel
+  EndIf
+
+  If X2 >= X5 Then
+    Goto FirstStrikeFailedLabel
+  EndIf
+  
+  TextWindow.WriteLine("Peace negotiations successful")
+
+  PA[4] = -X1 - 1
+  X2 = 0
+  Goto WarCasualtiesUpdateLabel
+
+FirstStrikeFailedLabel:
+
+  TextWindow.WriteLine("First strike failed - you need")
+  TextWindow.WriteLine("professionals")
+  PA[4] = -X3 - X1 - 2
+  X2 = X2 + 3 + PA[4]
+
+WarCasualtiesUpdateLabel:
+
+  P = P + PA[4]
+
+  If X2 < 1 Then
+    U1 = U1 - 2 * PA[4] - 3 * PA[5]
+    Goto DiseaseCheckLabel
+  EndIf
+
+HireMercenariesCheckLabel:
+
+  TextWindow.WriteLine("How many mercenaries will you hire")
+  TextWindow.Write("at 40 HL. each = ")
+  ReadNumericInput()
+  
+  If V > 75 Then
+    TextWindow.WriteLine("There are only 75 available for hire")
+    Goto HireMercenariesCheckLabel
+  EndIf
+
+  X2 = Math.Floor(X2 * M)
+  X5 = Math.Floor(P * X4) + 7 * V + 13
+  X6 = X2 - 4 * V - Math.Floor(0.25 * X5)
+  X2 = X5 - X2
+  LA[3] = Math.Floor(0.8 * X2)
+  
+  If (-LA[3] <= 0.67 * L) Then
+    Goto YouWonLabel
+  EndIf
+  
+  TextWindow.WriteLine("You have been overrun and have lost")
+  TextWindow.WriteLine("your entire Dukedom")
+  Goto YouLostLabel
+
+YouWonLabel:
+
+  X1 = LA[3]
+
+  For j1 = 1 To 3
+    X3 = Math.Floor(X1 / (4 - j1))
+    If (-X3 <= SA[j1]) Then
+      X5 = X3
+    Else
+      X5 = -SA[j1]
+    Endif
+    SA[j1] = SA[j1] + X5
+    X1 = X1 - X5  
+  EndFor
+
+  If LA[3] < 399 Then
+    Goto WarResultCheck
+  EndIf
+
+  TextWindow.WriteLine("You have overrun the enemy and annexed")
+  TextWindow.WriteLine("his entire Dukedom")
+  
+  GA[7] = 3513
+  G = G + GA[7]
+  X6 = -47
+  X4 = 0.55
+  
+  If K > 0 Then
+    Goto WarResultCalculations
+  EndIf
+
+  K = 1
+
+  TextWindow.WriteLine("The King fears for his throne and")
+  TextWindow.WriteLine("may be be planning direct action")
+  Goto WarResultCalculations
+
+WarResultCheck:
+
+  If X2 < 1 Then
+    Goto YouLostTheWarLabel
+  EndIf
+  
+  TextWindow.WriteLine("You have won the war")
+
+  X4 = 0.67
+  GA[7] = Math.Floor(1.7 * LA[3])
+  G = G + GA[7]
+  Goto CleanUpWarMessLabel
+
+YouLostTheWarLabel:
+
+  TextWindow.WriteLine("You have lost the war")
+  X4 = GA[8] / L
+
+CleanUpWarMessLabel:
+
+  If X6 <= 9 Then
+    X6 = 0
+  Else
+    X6 = Math.Floor(X6 / 10)
+  EndIf
+  
+WarResultCalculations:
+
+  If X6 <= P Then
+    X6 = -X6 * -1
+  Else
+    X6 = -P * -1
+  EndIf
+
+  PA[4] = PA[4] - X6
+  P = P - X6
+  GA[8] = GA[8] + Math.Floor(X4 * LA[3])
+  X6 = 40 * V
+  
+  If X6 <= G Then
+    GA[6] = -X6
+    Goto FruitsOfWarLabel
+  EndIf
+
+  GA[6] = -G
+  PA[5] = -Math.Floor((X6 - G) / 7) - 1
+  
+  TextWindow.WriteLine("There isn't enough grain to pay the")
+  TextWindow.WriteLine("mercenaries")
+
+FruitsOfWarLabel:
+
+  G = G + GA[6]
+  If -PA[5] <= P Then
+    PA[5] = -PA[5] * -1
+  Else
+    PA[5] = P * -1
+  EndIf
+
+  P = P + PA[5]
+  L = L + LA[3]
+  U1 = U1 - 2 * PA[4] - 3 * PA[5]
+
+DiseaseCheckLabel:
+
+  '  Plagues, Births, Natural Deaths
+  '
+  Q1 = 8
+  FNX()
+  
+  X1 = X + 1
+  
+  If X1 > 3 Then
+    Goto PopulationControlLabel
+  EndIf
+      
+  If X1 <> 1 Then
+    TextWindow.WriteLine("A POX EPIDEMIC has broken out")
+    X2 = X1 * 5
+    PA[6] = -Math.Floor(P/X2)
+    P = P + PA[6]
+    Goto PopulationControlLabel
+  EndIf
+
+  If D > 0 Then      
+    Goto PopulationControlLabel
+  EndIf
+
+  TextWindow.WriteLine("The BLACK PLAGUE has struck the area")
+  D = 13
+  X2 = 3
+  PA[6] = -Math.Floor(P/X2)
+  P = P + PA[6]
+
+PopulationControlLabel:
+
+  Q1 = 8
+  FNX()
+
+  X1 = X + 4
+
+  If PA[5] = 0 Then
+    X1 = -X1 * -1
+  Else
+    X1 = -4.5 * -1
+  EndIf
+  
+  PA[8] = Math.Floor(P/X1)
+  PA[7] = Math.Ceiling(0.3 - P/22)
+  P = P + PA[7] + PA[8]
+  D = D - 1
+  
+  ' Grain Harvest, Castle Expenses, King's Tax
+  '
+  GA[8] = Math.Floor(C * GA[8])
+  G = G + GA[8]
+  X1 = GA[8] - 4000
+
+  If X1 <= 0 Then
+    GA[9] = -GA[9] * -1
+  Else
+    GA[9] = Math.Floor(0.1 * X1) * -1
+  EndIf
+  
+  GA[9] = GA[9] - 120
+  G = G + GA[9]
+
+  If K < 0 Then
+    Goto UpdateCounterAndContinueLabel
+  EndIf
+    
+  X1 = -Math.Floor(L/2)
+
+  If K < 2 Then
+    X1 = -X1 * -1
+  Else
+    X1 = -2 * X1 * -1
+  EndIf
+
+  If -X1 <= G Then
+    GA[10] = GA[10] + X1
+    G = G + X1  
+    Goto UpdateCounterAndContinueLabel
+  Endif
+  
+  
+  TextWindow.WriteLine("You have insufficient grain to pay")
+  TextWindow.WriteLine("the royal tax")
+  Goto PlayAgainLabel
+
+UpdateCounterAndContinueLabel:
+
+  Goto LastYearsResultsLabel
+
+PlayAgainLabel:
+
+  TextWindow.Write("Do you wish to play again ? ")
+  ReadYesNo()
+  
+  If V = "Y" Then
+    Goto InitializeLabel
+  EndIf
+
+Sub InitializeGlobalVariablesAndArrays
+  Y      = 0
+  C1     = 3.95
+  U1     = 0
+  U2     = 0
+  K      = 0
+  D      = 0
+  P      = 100
+  L      = 600
+  G      = 4177
+  GA[1]  = 5193
+  GA[2]  = -1344
+  GA[3]  = 0
+  GA[4]  = -768
+  GA[5]  = 0
+  GA[6]  = 0
+  GA[7]  = 0
+  GA[8]  = 1516
+  GA[9]  = -120
+  GA[10] = -300
+  LA[1]  = 600
+  LA[2]  = 0
+  LA[3]  = 0
+  PA[1]  = 96
+  PA[2]  = 0
+  PA[3]  = 0
+  PA[4]  = 0
+  PA[5]  = 0
+  PA[6]  = 0
+  PA[7]  = -4
+  PA[8]  = 8
+  SA[1]  = 216
+  SA[2]  = 200
+  SA[3]  = 184
+  SA[4]  = 0
+  SA[5]  = 0
+  SA[6]  = 0
+  UA[1]  = 0
+  UA[2]  = 0
+  UA[3]  = 0
+  UA[4]  = 0
+  UA[5]  = 0
+  UA[6]  = 0
+EndSub
+
+Sub InitializeGlobalTextStringArrays
+  ' Initialize Text String Arrays
+  '
+  GStr[1]  = "Grain at Start       "
+  GStr[2]  = "Used for food        "
+  GStr[3]  = "Land deals           "
+  GStr[4]  = "Seeding              "
+  GStr[5]  = "Rat losses           "
+  GStr[6]  = "Mercenary hire       "
+  GStr[7]  = "Fruits of war        "
+  GStr[8]  = "Crop yield           "
+  GStr[9]  = "Castle expense       "
+  GStr[10] = "Royal tax            "
+  
+  LStr[1]  = "Land at Start        "
+  LStr[2]  = "Bought/sold          "
+  LStr[3]  = "Fruits of war        "
+  
+  PStr[1]  = "Peasants at Start    "
+  PStr[2]  = "Starvations          "
+  PStr[3]  = "King's levy          "
+  PStr[4]  = "War casualties       "
+  PStr[5]  = "Looting victims      "
+  PStr[6]  = "Disease victims      "
+  PStr[7]  = "Natural deaths       "
+  PStr[8]  = "Births               "
+EndSub
+
+Sub InitializeRandomBaseTable
+
+  For i = 1 to 8
+    RA[i] = 0
+  EndFor
+
+  Q1 = 4
+  Q2 = 7
+  GaussianRandomNumber()
+  RA[1] = G0
+  Q2 = 8
+  GaussianRandomNumber()
+  RA[2] = G0
+  Q2 = 6
+  GaussianRandomNumber()
+  RA[3] = G0
+  Q1 = 3
+  Q2 = 8
+  GaussianRandomNumber()
+  RA[4] = G0
+  GaussianRandomNumber()
+  RA[5] = G0
+  Q1 = 3
+  Q2 = 6
+  GaussianRandomNumber()
+  RA[6] = G0
+  Q2 = 8
+  GaussianRandomNumber()
+  RA[7] = G0
+  Q1 = 4
+  GaussianRandomNumber()
+  RA[8] = G0
+
+EndSub
