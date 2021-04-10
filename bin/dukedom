@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+require "rubygems"
+
+require 'rainbow/refinement'
+using Rainbow
+
+libdir = File.join( __dir__, "..", "lib")
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+
+
+require "dukedom"
+
+# 1. Print Banner
+puts
+puts "D U K E D O M".bright.green.underline
+puts
+puts "Ruby version".red
+puts
+
+# 2. Init a Ledger
+ledger = Dukedom::Ledger.new
+
+# 3. Choose a Reporter
+reporter = Dukedom::Reporter.new(ledger)
+
+# 5. Game.start
+# until Dukedom::Ledger.game_over? do
+  # 6. Report
+  puts reporter.report
+  # 7. Make a Food Manager (Chef)
+  # 8. Update Ledger / End check
+  # 9. Make a Real Estate Manager
+  # 10. Update Ledger / End check
+  # 10.5 => War with king?
+  # 11. Make a Farm Manager
+  # 12. Update Ledger
+  # 14. Process Disease Stuff
+  # 15. Increment Year
+  # 16. Retirement check
+# end
+
+# 18. Why did we break?

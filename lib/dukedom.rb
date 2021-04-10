@@ -2,6 +2,8 @@
 
 require_relative "dukedom/version"
 require_relative "dukedom/base_table"
+require_relative "dukedom/ledger"
+require_relative "dukedom/reporter"
 
 module Dukedom
   class Error < StandardError; end

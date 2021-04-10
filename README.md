@@ -1,39 +1,92 @@
 # Dukedom
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/dukedom`. To experiment with that code, run `bin/console` for an interactive prompt.
+Port of (link) to Ruby for fun and understanding
 
-TODO: Delete this and the text above, and describe your gem
 
-## Installation
+## Functions to write
 
-Add this line to your application's Gemfile:
+- random number in a range
+- random gaussian distribution of numbers cache
+- read a yes or no from input
+- read a positive integer from input
 
-```ruby
-gem 'dukedom'
-```
+- init all the variables
 
-And then execute:
+- End of year checks due to holdings
+- End of year check due to retirement
 
-    $ bundle install
+### Process Food
+- Ask: How much grain for food
+- Insufficient? Re-ask
+- If not enough for food, Peasants protest, re-ask
+- X1 magic #s (line 333)
+- If not enough peasants after processing food: GAME ENDS
 
-Or install it yourself as:
+### Buy/Sell Land
 
-    $ gem install dukedom
+- Buy Land for Grain
+- Sell land for Grain
+- Sell or not interested
+- If not enough land, abolished
+- If sell for too low, King gets mad
 
-## Usage
+### Plant Land
 
-TODO: Write usage instructions here
+- get a number
+- maybe insufficient land to, re-ask
+- maybe insufficient peasants to farm, re-ask
+- maybe grain deamnds are higher, re-ask
 
-## Development
+### Crop Management & Yield
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+- rotation
+- seven year locusts
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
-## Contributing
+### War
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/dukedom. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/dukedom/blob/master/CODE_OF_CONDUCT.md).
+- all the war conditions
 
-## Code of Conduct
+### Disease
 
-Everyone interacting in the Dukedom project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/dukedom/blob/master/CODE_OF_CONDUCT.md).
+- 
+
+## Text Output
+
+- Banner
+- Annual Report Summary
+- Annual Report Detail
+- Insufficient Grain for action
+- Insufficient Land for action
+- Insufficient Peasants for action
+- Game over / Deposed
+- Game over / Abolished due to loss of peasants
+- Game over / Abolished due to loss of land
+- War results
+- Disease results
+
+# Rough Loop
+
+1. Print Banner
+2. Init a Ledger
+3. Choose a Reporter
+4. Create Game w/ Ledger, Reporter
+5. Game.start
+6. Report
+7. Make a Food Manager (Chef)
+8. Update Ledger / End check
+9. Make a Real Estate Manager
+10. Update Ledger / End check
+10.5 War with king? (I think)
+11. Make a Farm Manager
+12. Update Ledger
+13. War check again?
+14. Process Disease Stuff
+15. Increment Year
+16. Retirement check
+17. Goto 6
+18. Why did we break?
+
+
+
+
