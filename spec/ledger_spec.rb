@@ -14,8 +14,13 @@ module Dukedom
       it "there is the right amount of land" do
         expect(ledger.land).to eq(600)
       end
+
       it "there is the right amount of grain" do
         expect(ledger.grain).to eq(4177)
+      end
+
+      it "there is a crop yield rate" do
+        expect(ledger.crop_yield_rate).to eq(3.95)
       end
     end
 

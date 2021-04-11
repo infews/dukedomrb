@@ -6,13 +6,14 @@ module Dukedom
       :grain_for_land, :seeding, :rat_losses, :grain_for_mercs, :seized_grain, :crop_yield,
       :castle_expenses, :royal_tax
 
-    attr_reader :previous_year_peasants, :previous_year_land, :land_transactions, :previous_year_grain
+    attr_reader :previous_year_peasants, :previous_year_land, :land_transactions, :previous_year_grain, :crop_yield_rate
 
     def initialize
       @year = 0
       @peasants = @previous_year_peasants = 100
-      @land = @previous_year_grain = 600
+      @land = @previous_year_land = 600
       @grain = @previous_year_grain = 4177
+      @crop_yield_rate = 3.95
 
       reset_annual_events
     end

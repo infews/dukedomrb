@@ -3,14 +3,9 @@ f3 = 2
 q1 = 0
 q2 = 0
 
-year = peasants = land = grain = 0
 grain_text = [nil]
 land_text = [nil]
 peasants_text = [nil]
-
-grain_archive = Array.new(11)
-land_archive = Array.new(4)
-peasant_archive = Array.new(9)
 
 # Generate a Random # between -limit and limit, plus random offsset
 def f_n_x(limit, index)
@@ -72,14 +67,14 @@ end
 
 # Error message for Grain purchase
 # x1 is amount of grain per hectare of land
-def insufficient_grain
+def insufficient_grain(grain_per_hectare)
   puts("But you don't have enough grain")
   puts("You have ")
   puts(grain)
   put(" HL. of grain left,")
-  if x1 >= 4
+  if grain_per_hectare >= 4
     puts("Enough to buy ")
-    puts(Math.Floor(grain / x1))
+    puts(Math.Floor(grain / grain_per_hectare))
     puts(" HA. of land")
   else
     puts("Enough to plant ")
@@ -138,7 +133,55 @@ skip_report = read_yes_no
 #
 #  Initialize state
 #
-intialize_globals
+year = 0
+previous_year_crop_yield_rate = 3.95
+u1 = 0
+u2 = 0
+K = 0
+D = 0
+peasants = 100
+land = 600
+grain = 4177
+
+grain_at_start = 5193
+grain_for_food = -1344
+land_deals = 0
+seeding = -768
+rat_losses = 0
+grain_for_mercs = 0
+seized_grain = 0
+crop_yield = 1516
+castle_expenses = -120
+royal_tax = -300
+
+land_at_start = 600
+land_transactions = 0
+seized_land = 0
+
+peasants_at_start = 96
+starvations = 0
+kings_levy = 0
+war_casualties = 0
+looting_victims = 0
+disease_victims = 0
+natural_deaths = -4
+births = 8
+
+land_quality = Array[7]
+land_quality[1] = 216
+land_quality[2] = 200
+land_quality[3] = 184
+land_quality[4] = 0
+land_quality[5] = 0
+land_quality[6] = 0
+
+uA[1] = 0
+uA[2] = 0
+uA[3] = 0
+uA[4] = 0
+uA[5] = 0
+uA[6] = 0
+
 intialize_global_strings
 
 u = 0
@@ -209,8 +252,8 @@ puts("")
 
 puts("100% 80%  60%  40%  20%  Depl")
 [1..6].each do |i|
-  puts(sa[i])
-  [1..(5 - Text.GetLength(sa[i]))].times do
+  puts(land_quality[i])
+  [1..(5 - Text.GetLength(land_quality[i]))].times do
     puts(" ")
   end
 end
@@ -220,8 +263,7 @@ puts("")
 puts("")
 
 [1..10].each do |i|
-  if grain_archive[i] != 0
-    Or i == 1
+  if grain_archive[i] != 0 || i == 1
     puts(grain_text[i])
     Stack.PushValue(StackVar, grain_archive[i])
     output_pad_spacing()
@@ -262,9 +304,9 @@ end
   grain_archive[i] = 0
 end
 
-peasant_archive[1] = peasants
-land_archive[1] = land
-grain_archive[1] = grain
+peasants_at_start = peasants
+land_at_start = land
+grain_at_start = grain
 
 # Test for End of Game
 #
@@ -330,7 +372,7 @@ else
 end
 
 if input > grain
-  insufficient_grain
+  insufficient_grain(x1)
   Goto GrainForFoodLabel
 end
 
@@ -340,13 +382,13 @@ if Math.Floor(input / peasants) < 11 && input != grain
   Goto GrainForFoodLabel
 end
 
-grain_archive[2] = -input
-grain = grain + grain_archive[2]
+grain_for_food = -input
+grain = grain + grain_for_food
 x1 = input / peasants
 if x1 < 13
   puts("Some peasants have starved")
-  peasant_archive[2] = -Math.Floor(peasants - peasants / 13)
-  peasants = peasants + peasant_archive[2]
+  starvations = -Math.Floor(peasants - peasants / 13)
+  peasants = peasants + starvations
 end
 
 x1 = x1 - 14
@@ -356,7 +398,7 @@ else
   x1 = -4 * -1
 end
 
-u1 = u1 - 3 * peasant_archive[2] - 2 * x1
+u1 = u1 - 3 * starvations - 2 * x1
 
 if (u > 88)
   deposed
@@ -370,9 +412,9 @@ end
 
 #LandBuySellLabel:
 
-C = C1
+crop_yield_rate = C1
 x = f_n_x(f3, 1)
-x1 = Math.Floor(2 * C + x - 5)
+x1 = Math.Floor(2 * crop_yield_rate + x - 5)
 if x1 >= 4
   x1 = -x1 * -1
 else
@@ -381,23 +423,23 @@ end
 
 LandToBuyLabel :
 
-  puts("Land to buy at ")
+puts("Land to buy at ")
 puts(x1)
 puts(" HL./HA. = ")
 read_number
-grain_archive[3] = -V * x1
+land_deals = -input * x1
 
-if (-grain_archive[3] > grain)
+if (-land_deals > grain)
   insufficient_grain
   Goto LandToBuyLabel
 end
 
-land_archive[2] = V
-sa[3] = sa[3] + V
-if V > 0
+land_transactions = input
+land_quality[3] = land_quality[3] + input
+if input > 0
   Goto LandCheckLabel
 else
-  x2 = sa[1] + sa[2] + sa[3]
+  x2 = land_quality[1] + land_quality[2] + land_quality[3]
 end
 
 3.times do
@@ -411,8 +453,8 @@ end
     puts(x2)
     puts(" HA. of good land")
   else
-    grain_archive[3] = land_to_sell * x1
-    if grain_archive[3] <= 4000
+    land_deals = land_to_sell * x1
+    if land_deals <= 4000
       Goto LandSaleCompleteLabel
     else
       puts("No buyers have that much grain try less")
@@ -422,47 +464,48 @@ end
 
 puts("Buyers have lost interest")
 land_to_sell = 0
-grain_archive[3] = 0
+land_deals = 0
 
 LandSaleCompleteLabel :
 
 
-land_archive[2] = -V
+land_transactions = -input
 
-(1..3).reverse_each do |j1|
-  if land_to_sell <= sa[j1]
+(1..3).reverse_each do |k|
+  if land_to_sell <= land_quality[k]
     Goto updateLandTablesCompleteLabel
   end
 
-  land_to_sell = land_to_sell - sa[j1]
-  sa[j1] = 0
-end
+  land_to_sell = land_to_sell - land_quality[k]
+  land_quality[k] = 0
+
 
 puts("Land selling loop error")
 Program.End()
 
 updateLandTablesCompleteLabel :
 
-  sa[j1] = sa[j1] - land_to_sell
+  land_quality[k] = land_quality[k] - land_to_sell
 
 LandCheckLabel :
 
-  land = land + land_archive[2]
+  land = land + land_transactions
+end
 
 if land < 10
   abolished_land
   Goto PlayAgainLabel
 end
 
-if land_archive[2] < 0
+if land_transactions < 0
   And x1 < 4
-  grain_archive[3] = Math.Floor(grain_archive[3] / 2)
+  land_deals = Math.Floor(land_deals / 2)
   puts("The High King appropriates half")
   puts("of your earnings as punishment")
   puts("for selling at such a low price")
 end
 
-grain = grain + grain_archive[3]
+grain = grain + land_deals
 
 #War with the King
 
@@ -517,28 +560,28 @@ if V > 4 * peasants
   Goto LandToPlantLabel
 end
 
-grain_archive[4] = -2 * V
-if -grain_archive[4] > grain
+seeding = -2 * V
+if -seeding > grain
   insufficient_grain
   Goto LandToPlantLabel
 end
 
-grain_archive[8] = V
-grain = grain + grain_archive[4]
+crop_yield = V
+grain = grain + seeding
 
 [0..6]..each { |i| uA[i] = 0 }
 
-[0..6].each do |j1|
-  if V <= sa[j1]
-    uA[j1] = V
-    sa[j1] = sa[j1] - V
-    sa[1] = sa[1] + sa[2]
-    sa[2] = 0
+[0..6].each do |k|
+  if V <= land_quality[k]
+    uA[k] = V
+    land_quality[k] = land_quality[k] - V
+    land_quality[1] = land_quality[1] + land_quality[2]
+    land_quality[2] = 0
     Goto CropRotationLabel
   end
-  V = V - sa[j1]
-  uA[j1] = sa[j1]
-  sa[j1] = 0
+  V = V - land_quality[k]
+  uA[k] = land_quality[k]
+  land_quality[k] = 0
 end
 
 puts("Land table error")
@@ -546,47 +589,44 @@ Program.End()
 
 CropRotationLabel :
 
-  for j1
-    = 3 To 6
-    sa[j1 - 2] = sa[j1 - 2] + sa[j1]
-    sa[j1] = 0
-  end
-
-for j1
-  = 1 To 5
-  sa[j1 + 1] = sa[j1 + 1] + uA[j1]
+(3..6).each do |k|
+  land_quality[k - 2] = land_quality[k - 2] + land_quality[k]
+  land_quality[k] = 0
 end
 
-sa[6] = sa[6] + uA[6]
+(1..5).each do |k|
+  land_quality[k + 1] = land_quality[k + 1] + uA[k]
+end
+
+land_quality[6] = land_quality[6] + uA[6]
 
 #  Crop yield and loss
 #
 q1 = 2
 x = f_n_x(f3, 2)
-C = x + 9
+crop_yield_rate= x + 9
 if (Math.Floor(Y / 7) * 7)
   = Y
   puts("Seven year locusts")
-  C = Math.Floor(C * 0.65)
+  crop_yield_rate= Math.Floor(crop_yield_rate* 0.65)
 end
 
 x1 = 0
 
-for j1
-  = 1 To 5
-  x1 = x1 + uA[j1] * (1.2 - 0.2 * j1)
+(1..5).each do |k|
+  x1 = x1 + uA[k] * (1.2 - 0.2 * k)
 end
 
-if grain_archive[8] = 0
-  C1 = 0
-  C = 0
+if crop_yield = 0
+  previous_year_crop_yield_rate = 0
+  crop_yield_rate = 0
 else
-  C1 = Math.Floor((C * (x1 / grain_archive[8])) * 100) / 100
-  C = C1
+  previous_year_crop_yield_rate = Math.Floor((crop_yield_rate * (x1 / crop_yield)) * 100) / 100
+  crop_yield_rate = previous_year_crop_yield_rate
 end
 
 puts("Yield = ")
-puts(C)
+puts(crop_yield_rate)
 puts(" HL./HA")
 
 x = f_n_x(f3, 3)
@@ -595,8 +635,8 @@ x1 = x + 3
 if x1 < 9
   Goto WarLabel
 else
-  grain_archive[5] = -Math.Floor((x1 * grain) / 83)
-  grain = grain + grain_archive[5]
+  rat_losses = -Math.Floor((x1 * grain) / 83)
+  grain = grain + rat_losses
   puts("Rats infest the grainery")
 
   if peasants < 67 || K = -1
@@ -620,11 +660,11 @@ else
       supply = read_yes_no()
 
       if supply == "N"
-        grain_archive[10] = -100 * x1
-        grain = grain + grain_archive[10]
+        royal_tax = -100 * x1
+        grain = grain + royal_tax
       else
-        peasant_archive[3] = -x1
-        peasants = peasants + peasant_archive[3]
+        kings_levy = -x1
+        peasants = peasants + kings_levy
       end
     end
   end
@@ -643,15 +683,14 @@ Goto NeighborWarCheckLabel
 
 KingGrowsuneasyLabel :
 
-  x1 = Math.Floor(11 - 1.5 * C)
+  x1 = Math.Floor(11 - 1.5 * crop_yield_rate)
 if (x1 >= 2)
   x1 = -x1 * -1
 else
   x1 = -2 * -1
 end
 
-if (K != 0)
-  Or (peasants <= 109) Or ((17 * (land - 400) + G) <= 10600)
+if (K != 0) || (peasants <= 109) || ((17 * (land - 400) + G) <= 10600)
   Goto OkayWithTheKingLabel
 end
 
@@ -696,7 +735,7 @@ end
 
 puts("Peace negotiations successful")
 
-peasant_archive[4] = -x1 - 1
+war_casualties = -x1 - 1
 x2 = 0
 Goto WarCasualtiesupdateLabel
 
@@ -704,15 +743,15 @@ FirstStrikeFailedLabel :
 
   puts("First strike failed - you need")
 puts("professionals")
-peasant_archive[4] = -x3 - x1 - 2
-x2 = x2 + 3 + peasant_archive[4]
+war_casualties = -x3 - x1 - 2
+x2 = x2 + 3 + war_casualties
 
 WarCasualtiesupdateLabel :
 
-  peasants = peasants + peasant_archive[4]
+  peasants = peasants + war_casualties
 
 if x2 < 1
-  u1 = u1 - 2 * peasant_archive[4] - 3 * peasant_archive[5]
+  u1 = u1 - 2 * war_casualties - 3 * looting_victims
   Goto DiseaseCheckLabel
 end
 
@@ -731,9 +770,9 @@ x2 = Math.Floor(x2 * m)
 x5 = Math.Floor(peasants * X4) + 7 * V + 13
 X6 = x2 - 4 * V - Math.Floor(0.25 * x5)
 x2 = x5 - x2
-land_archive[3] = Math.Floor(0.8 * x2)
+seized_land = Math.Floor(0.8 * x2)
 
-if (-land_archive[3] <= 0.67 * L)
+if (-seized_land <= 0.67 * L)
   Goto YouWonLabel
 end
 
@@ -743,28 +782,28 @@ Goto YouLostLabel
 
 YouWonlandabel :
 
-  x1 = land_archive[3]
+  x1 = seized_land
 
 (1..3).each do |j1|
   x3 = Math.Floor(x1 / (4 - j1))
-  if (-x3 <= sa[j1])
+  if (-x3 <= land_quality[j1])
     x5 = x3
   else
-    x5 = -sa[j1]
+    x5 = -land_quality[j1]
   end
-  sa[j1] = sa[j1] + x5
+  land_quality[j1] = land_quality[j1] + x5
   x1 = x1 - x5
 end
 
-if land_archive[3] < 399
+if seized_land < 399
   Goto WarResultCheck
 end
 
 puts("You have overrun the enemy and annexed")
 puts("his entire Dukedom")
 
-grain_archive[7] = 3513
-grain = grain + grain_archive[7]
+seized_grain = 3513
+grain = grain + seized_grain
 X6 = -47
 X4 = 0.55
 
@@ -787,14 +826,14 @@ WarResultCheck :
 puts("You have won the war")
 
 X4 = 0.67
-grain_archive[7] = Math.Floor(1.7 * land_archive[3])
-grain = grain + grain_archive[7]
+seized_grain = Math.Floor(1.7 * seized_land)
+grain = grain + seized_grain
 Goto CleanupWarMessLabel
 
 YouLostTheWarLabel :
 
   puts("You have lost the war")
-X4 = grain_archive[8] / land
+X4 = crop_yield / land
 
 CleanupWarMessLabel :
 
@@ -812,34 +851,34 @@ WarResultCalculations :
     X6 = -peasants * -1
   end
 
-peasant_archive[4] = peasant_archive[4] - X6
+war_casualties = war_casualties - X6
 peasants = peasants - X6
-grain_archive[8] = grain_archive[8] + Math.Floor(X4 * land_archive[3])
+crop_yield = crop_yield + Math.Floor(X4 * seized_land)
 X6 = 40 * V
 
 if X6 <= grain
-  grain_archive[6] = -X6
+  grain_for_mercs = -X6
   Goto FruitsOfWarLabel
 end
 
-grain_archive[6] = -grain
-peasant_archive[5] = -Math.Floor((X6 - grain) / 7) - 1
+grain_for_mercs = -grain
+looting_victims = -Math.Floor((X6 - grain) / 7) - 1
 
 puts("There isn't enough grain to pay the")
 puts("mercenaries")
 
 FruitsOfWarLabel :
 
-  grain = grain + grain_archive[6]
-if -peasant_archive[5] <= peasants
-  peasant_archive[5] = -peasant_archive[5] * -1
+  grain = grain + grain_for_mercs
+if -looting_victims <= peasants
+  looting_victims = -looting_victims * -1
 else
-  peasant_archive[5] = peasants * -1
+  looting_victims = peasants * -1
 end
 
-peasants = peasants + peasant_archive[5]
-land = land + land_archive[3]
-u1 = u1 - 2 * peasant_archive[4] - 3 * peasant_archive[5]
+peasants = peasants + looting_victims
+land = land + seized_land
+u1 = u1 - 2 * war_casualties - 3 * looting_victims
 
 DiseaseCheckLabel :
 
@@ -856,8 +895,8 @@ end
 if x1 != 1
   puts("A POX EPIDEMIC has broken out")
   x2 = x1 * 5
-  peasant_archive[6] = -Math.Floor(peasants / x2)
-  peasants = peasants + peasant_archive[6]
+  disease_victims = -Math.Floor(peasants / x2)
+  peasants = peasants + disease_victims
   Goto PopulationControlLabel
 end
 
@@ -868,8 +907,8 @@ end
 puts("The BLACK PLAGuE has struck the area")
 D = 13
 x2 = 3
-peasant_archive[6] = -Math.Floor(peasants / x2)
-peasants = peasants + peasant_archive[6]
+disease_victims = -Math.Floor(peasants / x2)
+peasants = peasants + disease_victims
 
 PopulationControlLabel :
 
@@ -877,31 +916,31 @@ PopulationControlLabel :
 
 x1 = x + 4
 
-if peasant_archive[5] = 0
+if looting_victims = 0
   x1 = -x1 * -1
 else
   x1 = -4.5 * -1
 end
 
-peasant_archive[8] = Math.Floor(peasants / x1)
-peasant_archive[7] = Math.Ceiling(0.3 - peasants / 22)
-peasants = peasants + peasant_archive[7] + peasant_archive[8]
+births = Math.Floor(peasants / x1)
+natural_deaths = Math.Ceiling(0.3 - peasants / 22)
+peasants = peasants + natural_deaths + births
 D = D - 1
 
-# Grain Harvest, Castle Expenses, King#s Tax
+# Grain Harvest, Castle Expenses, King's Tax
 #
-grain_archive[8] = Math.Floor(C * grain_archive[8])
-grain = grain + grain_archive[8]
-x1 = grain_archive[8] - 4000
+crop_yield = Math.Floor(crop_yield_rate * crop_yield)
+grain = grain + crop_yield
+x1 = crop_yield - 4000
 
 if x1 <= 0
-  grain_archive[9] = -grain_archive[9] * -1
+  castle_expenses = -castle_expenses * -1
 else
-  grain_archive[9] = Math.Floor(0.1 * x1) * -1
+  castle_expenses = Math.Floor(0.1 * x1) * -1
 end
 
-grain_archive[9] = grain_archive[9] - 120
-grain = grain + grain_archive[9]
+castle_expenses = castle_expenses - 120
+grain = grain + castle_expenses
 
 if K < 0
   Goto updateCounterAndContinueLabel
@@ -916,7 +955,7 @@ else
 end
 
 if -x1 <= grain
-  grain_archive[10] = grain_archive[10] + x1
+  royal_tax = royal_tax + x1
   grain = grain + x1
   Goto updateCounterAndContinueLabel
 end
@@ -938,50 +977,7 @@ if V = "Y"
   Goto InitializeLabel
 end
 
-def intialize_globals
-  Y = 0
-  C1 = 3.95
-  u1 = 0
-  u2 = 0
-  K = 0
-  D = 0
-  peasants = 100
-  land = 600
-  grain = 4177
-  grain_archive[1] = 5193
-  grain_archive[2] = -1344
-  grain_archive[3] = 0
-  grain_archive[4] = -768
-  grain_archive[5] = 0
-  grain_archive[6] = 0
-  grain_archive[7] = 0
-  grain_archive[8] = 1516
-  grain_archive[9] = -120
-  grain_archive[10] = -300
-  land_archive[1] = 600
-  land_archive[2] = 0
-  land_archive[3] = 0
-  peasant_archive[1] = 96
-  peasant_archive[2] = 0
-  peasant_archive[3] = 0
-  peasant_archive[4] = 0
-  peasant_archive[5] = 0
-  peasant_archive[6] = 0
-  peasant_archive[7] = -4
-  peasant_archive[8] = 8
-  sa[1] = 216
-  sa[2] = 200
-  sa[3] = 184
-  sa[4] = 0
-  sa[5] = 0
-  sa[6] = 0
-  uA[1] = 0
-  uA[2] = 0
-  uA[3] = 0
-  uA[4] = 0
-  uA[5] = 0
-  uA[6] = 0
-end
+
 
 def intialize_global_strings
   # Initialize Text String Arrays
