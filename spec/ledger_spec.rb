@@ -139,48 +139,47 @@ module Dukedom
           expect(ledger.grain_for_land).to eq(571)
         end
 
-        it "tracks the seeding"  do
+        it "tracks the seeding" do
           expect(ledger.seeding).to eq(0)
           ledger.seeding = 439
           expect(ledger.seeding).to eq(439)
         end
 
-        it "tracks rat losses"  do
+        it "tracks rat losses" do
           expect(ledger.rat_losses).to eq(0)
           ledger.rat_losses = 5
           expect(ledger.rat_losses).to eq(5)
         end
 
-        it "tracks the grain spent on mercenaries"  do
+        it "tracks the grain spent on mercenaries" do
           expect(ledger.grain_for_mercs).to eq(0)
           ledger.grain_for_mercs = 100
           expect(ledger.grain_for_mercs).to eq(100)
         end
 
-        it "tracks the fruits of war"  do
+        it "tracks the fruits of war" do
           expect(ledger.seized_grain).to eq(0)
           ledger.seized_grain = 15
           expect(ledger.seized_grain).to eq(15)
         end
 
-        it "tracks the crop yield"  do
+        it "tracks the crop yield" do
           expect(ledger.crop_yield).to eq(0)
           ledger.crop_yield = 150
           expect(ledger.crop_yield).to eq(150)
         end
 
-        it "tracks the castle expenses"  do
+        it "tracks the castle expenses" do
           expect(ledger.castle_expenses).to eq(0)
           ledger.castle_expenses = 50
           expect(ledger.castle_expenses).to eq(50)
         end
 
-        it "tracks the royal tax"  do
+        it "tracks the royal tax" do
           expect(ledger.royal_tax).to eq(0)
           ledger.royal_tax = 30
           expect(ledger.royal_tax).to eq(30)
         end
-
       end
     end
 
@@ -212,7 +211,6 @@ module Dukedom
       end
 
       context "peasants" do
-
         it "updates the year" do
           expect(ledger.year).to eq(1)
         end

@@ -1,5 +1,5 @@
 require "erb"
-require 'rainbow/refinement'
+require "rainbow/refinement"
 using Rainbow
 
 module Dukedom
@@ -13,15 +13,13 @@ module Dukedom
     end
 
     def header
-      text = "Annual Report Summary".cyan
-      text << "\n"
-      text <<  "=====================".cyan
+      text = "Annual Report Summary".underline.cyan
       text << "\n"
       text
     end
 
     def template
-      text = <<~ERB
+      <<~ERB
         <%= header %>
         Year       <%= @ledger.year %>
         Peasants   <%= @ledger.peasants %>

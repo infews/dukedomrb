@@ -1,5 +1,5 @@
 require "erb"
-require 'rainbow/refinement'
+require "rainbow/refinement"
 using Rainbow
 
 module Dukedom
@@ -14,24 +14,20 @@ module Dukedom
 
     def population_header
       text = ""
-      text << "Population Report".cyan
-      text << "\n"
-      text << "-----------------".cyan
+      text << "Population Report".underline.cyan
       text << "\n"
       text
     end
 
     def land_header
       text = ""
-      text << "Land Report".cyan
-      text << "\n"
-      text << "-----------".cyan
+      text << "Land Report".underline.cyan
       text << "\n"
       text
     end
 
     def template
-      text = <<~ERB
+      <<~ERB
         <%= population_header %>
         Peasants at start of year <%= @ledger.previous_year_peasants %>
         King's Levy               <%= @ledger.levy %>
