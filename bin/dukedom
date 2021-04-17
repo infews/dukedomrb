@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require "rubygems"
 
-require 'rainbow/refinement'
+require "rainbow/refinement"
 using Rainbow
 
 libdir = File.join(__dir__, "..", "lib")
@@ -29,12 +29,12 @@ detail_reporter = Dukedom::DetailReporter.new(ledger)
 puts summary_reporter.report
 puts " "
 puts detail_reporter.report
-# 7. Make a Food Manager (Chef)
+# 7. Make a FoodMinister
 # 8. Update Ledger / End check
-# 9. Make a Real Estate Manager
+# 9. Make a LandMinister
 # 10. Update Ledger / End check
-# 10.5 => War with king?
-# 11. Make a Farm Manager
+# 10.5 => War with king? WarMinister
+# 11. Make a FarmingMinister
 # 12. Update Ledger
 # 14. Process Disease Stuff
 # 15. Increment Year

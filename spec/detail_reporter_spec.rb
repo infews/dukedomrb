@@ -56,6 +56,48 @@ module Dukedom
       end
 
       context "for the grain section" do
+        before do
+          ledger
+        end
+
+        it "lists the grain at the start of the year" do
+          expect(lines[17]).to match(/^Grain at start of year/)
+          expect(lines[17]).to match(/\s+\d+$/)
+        end
+
+        it "lists the grain used for food" do
+          expect(lines[18]).to match(/^Used for food/)
+          expect(lines[18]).to match(/\s+\d+$/)
+        end
+
+        it "lists the grain used for land deals" do
+          expect(lines[19]).to match(/^Used for land deals/)
+          expect(lines[19]).to match(/\s+\d+$/)
+        end
+
+        it "lists the seedings" do
+          expect(lines[20]).to match(/^Seedings/)
+          expect(lines[20]).to match(/\s+\d+$/)
+        end
+
+        it "lists the rat losses" do
+          expect(lines[21]).to match(/^Rat losses/)
+          expect(lines[21]).to match(/\s+\d+$/)
+        end
+
+        it "lists the crop yield" do
+          expect(lines[22]).to match(/^Crop yield/)
+          expect(lines[22]).to match(/\s+\d+$/)
+        end
+        it "lists the castle expenses" do
+          expect(lines[23]).to match(/^Castle expenses/)
+          expect(lines[23]).to match(/\s+\d+$/)
+        end
+
+        it "lists the royal tax" do
+          expect(lines[24]).to match(/^Royal Tax/)
+          expect(lines[24]).to match(/\s+\d+$/)
+        end
       end
     end
   end
