@@ -6,7 +6,7 @@ require_relative "dukedom/ledger"
 require_relative "dukedom/summary_reporter"
 require_relative "dukedom/detail_reporter"
 require_relative "dukedom/duke"
-
+require_relative "dukedom/food_minister"
 module Dukedom
   class Error < StandardError; end
   # Your code goes here...

@@ -363,7 +363,7 @@ end
 
 GrainForFoodLabel :
 
-  puts("Grain for food = ")
+puts("Grain for food = ")
 input = read_number()
 if input >= 100
   input = -input * -1
@@ -383,13 +383,13 @@ if Math.Floor(input / peasants) < 11 && input != grain
 end
 
 grain_for_food = -input
-grain = grain + grain_for_food
+grain = grain + grain_for_food # updates the ledger
 x1 = input / peasants
 if x1 < 13
   puts("Some peasants have starved")
-  starvations = -Math.Floor(peasants - peasants / 13)
+  starvations = -Math.Floor(peasants - input / 13)
   peasants = peasants + starvations
-end
+end # updates the ledger
 
 x1 = x1 - 14
 if x1 <= 4
