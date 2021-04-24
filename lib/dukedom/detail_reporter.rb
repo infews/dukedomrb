@@ -19,6 +19,7 @@ module Dukedom
       text
     end
 
+    # TODO: Move to a file, make a presenter that holds the rjust text in a presenter class?
     def template
       <<~ERB
         <%= header("Population") %>
@@ -39,10 +40,10 @@ module Dukedom
         Used for food             <%= @ledger.grain_for_food      %>
         Used for land deals       <%= @ledger.grain_for_land      %>
         Seedings                  <%= @ledger.seeding             %>
-        Rat losses                <%= @ledger.rat_losses           %>
-        Crop yield                <%= @ledger.crop_yield           %>
-        Castle expenses           <%= @ledger.castle_expenses      %>
-        Royal Tax                 <%= @ledger.royal_tax     %>
+        Rat losses                <%= @ledger.rat_losses          %>
+        Crop yield                <%= @ledger.crop_yield          %>
+        Castle expenses           <%= @ledger.castle_expenses     %>
+        Royal Tax                 <%= @ledger.royal_tax           %>
         
       ERB
     end

@@ -133,9 +133,9 @@ skip_report = read_yes_no
 #
 #  Initialize state
 #
-year = 0
+year_of_game = 0
 previous_year_crop_yield_rate = 3.95
-u1 = 0
+resentment = 0
 u2 = 0
 K = 0
 D = 0
@@ -198,7 +198,7 @@ LastYearsResultsLabel :
 
 puts("")
 puts("Year ")
-puts(year)
+puts(year_of_game)
 puts(" Peasants ")
 puts(peasants)
 puts(" Land ")
@@ -278,7 +278,7 @@ puts(grain)
 
 puts("")
 
-if year <= 0
+if year_of_game <= 0
   puts("(Severe crop damage due to seven")
   puts(" year locusts)")
 end
@@ -291,7 +291,7 @@ NewYearsDay :
   puts("")
 puts("")
 
-year += 1
+year_of_game += 1
 
 # clear archive data
 [0..8]..each do |i|
@@ -328,8 +328,7 @@ TooLittleLandCheckLabel :
 
 DeposedCheckLabel :
 
-  if u1 > 88
-    Or u2 > 99
+  if resentment > 88 || u2 > 99
     deposed()
     Goto PlayAgainLabel
   else
@@ -343,8 +342,7 @@ DeposedCheckLabel :
 
 AgeOfRetirementCheckLabel :
 
-  if Y > 45
-    And K = 0
+  if year_of_game > 45 && K = 0
     puts("You have reached the age of retirement")
     Goto PlayAgainLabel
   end
@@ -382,25 +380,28 @@ if Math.Floor(input / peasants) < 11 && input != grain
   Goto GrainForFoodLabel
 end
 
-grain_for_food = -input
-grain = grain + grain_for_food # updates the ledger
-x1 = input / peasants
-if x1 < 13
+grain_for_food = input
+grain = grain - grain_for_food # updates the ledger
+food_per_peasant = grain_for_food / peasants
+
+if food_per_peasant < 13
   puts("Some peasants have starved")
   starvations = -Math.Floor(peasants - input / 13)
   peasants = peasants + starvations
 end # updates the ledger
 
-x1 = x1 - 14
-if x1 <= 4
-  x1 = -x1 * -1
-else
-  x1 = -4 * -1
-end
 
-u1 = u1 - 3 * starvations - 2 * x1
+# X1 = X1 - 14
+# If X1 <= 4 Then
+# X1 = -X1 * -1
+# Else
+# X1 = -4 * -1
+# EndIf
+#
+overfed = min(4, food_per_peasant - 14)
+resentment = resentment - (3 * starvations) - (2 * overfed)
 
-if (u > 88)
+if (resentment > 88)
   deposed
   Goto PlayAgainLabel
 else
@@ -410,7 +411,7 @@ else
   end
 end
 
-#LandBuySellLabel:
+LandBuySellLabel:
 
 crop_yield_rate = C1
 x = f_n_x(f3, 1)
@@ -605,8 +606,8 @@ land_quality[6] = land_quality[6] + uA[6]
 q1 = 2
 x = f_n_x(f3, 2)
 crop_yield_rate= x + 9
-if (Math.Floor(Y / 7) * 7)
-  = Y
+if (Math.Floor(year_of_game / 7) * 7)
+  = year_of_game
   puts("Seven year locusts")
   crop_yield_rate= Math.Floor(crop_yield_rate* 0.65)
 end
@@ -697,7 +698,7 @@ end
 puts("The High King grows uneasy and may")
 puts("be subidizing wars against you")
 x1 = x1 + 2
-x2 = Y + 5
+x2 = year_of_game + 5
 Goto NeighborWarCheckLabel
 
 OkayWithTheKingLabel :
@@ -719,7 +720,7 @@ puts("A nearby Duke threatens war; ")
 x = f_n_x(f3, 6)
 
 x2 = Math.Floor(x2 + 85 + 18 * x)
-X4 = 1.2 - u1 / 16
+X4 = 1.2 - resentment / 16
 x5 = Math.Floor(peasants * X4) + 13
 
 puts("Will you attack first ? ")
@@ -751,7 +752,7 @@ WarCasualtiesupdateLabel :
   peasants = peasants + war_casualties
 
 if x2 < 1
-  u1 = u1 - 2 * war_casualties - 3 * looting_victims
+  resentment = resentment - 2 * war_casualties - 3 * looting_victims
   Goto DiseaseCheckLabel
 end
 
@@ -878,7 +879,7 @@ end
 
 peasants = peasants + looting_victims
 land = land + seized_land
-u1 = u1 - 2 * war_casualties - 3 * looting_victims
+resentment = resentment - 2 * war_casualties - 3 * looting_victims
 
 DiseaseCheckLabel :
 

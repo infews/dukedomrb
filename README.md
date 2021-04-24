@@ -87,6 +87,18 @@ Port of (link) to Ruby for fun and understanding
 17. Goto 6
 18. Why did we break?
 
+# Existing Code documentation
 
+## X1
+
+- Each year after food for grain, initializes to food/peasants
+- Moves to a range of [-13..4]
+
+# U
+
+## U1
+
+- Each year starts at 0
+- u1 = u1 - 3 * starvations -2 * x1
 
 

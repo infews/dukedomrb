@@ -36,6 +36,7 @@ module Dukedom
       @land_transactions -= existing_land
     end
 
+    # TODO: This belongs in the MajorDomo
     def game_over?
       if @peasants < 33
         true
