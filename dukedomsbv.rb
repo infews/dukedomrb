@@ -453,12 +453,12 @@ end
     puts("But you only have ")
     puts(x2)
     puts(" HA. of good land")
-  else
+  else # enough to sell
     land_deals = land_to_sell * x1
-    if land_deals <= 4000
+    if land_deals <= 4000    # grain transactions for land < 4000 then DONE
       Goto LandSaleCompleteLabel
     else
-      puts("No buyers have that much grain try less")
+      puts("No buyers have that much grain try less")  # not that much to sell, try again
     end
   end
 end
@@ -498,8 +498,7 @@ if land < 10
   Goto PlayAgainLabel
 end
 
-if land_transactions < 0
-  And x1 < 4
+if land_transactions < 0 && x1 < 4
   land_deals = Math.Floor(land_deals / 2)
   puts("The High King appropriates half")
   puts("of your earnings as punishment")
@@ -549,38 +548,38 @@ Goto PlayAgainLabel
 LandToPlantLabel :
 
   puts("Land to be planted = ")
-read_number
+input= read_number
 
-if V > land
+if input > land
   insufficient_land
   Goto LandToPlantLabel
 end
 
-if V > 4 * peasants
+if input > 4 * peasants
   insufficient_peasants
   Goto LandToPlantLabel
 end
 
-seeding = -2 * V
+seeding = -2 * input
 if -seeding > grain
   insufficient_grain
   Goto LandToPlantLabel
 end
 
-crop_yield = V
+remaining_crop_yield = input
 grain = grain + seeding
 
 [0..6]..each { |i| uA[i] = 0 }
 
 [0..6].each do |k|
-  if V <= land_quality[k]
-    uA[k] = V
-    land_quality[k] = land_quality[k] - V
+  if remaining_crop_yield <= land_quality[k]
+    uA[k] = remaining_crop_yield
+    land_quality[k] = land_quality[k] - remaining_crop_yield
     land_quality[1] = land_quality[1] + land_quality[2]
     land_quality[2] = 0
     Goto CropRotationLabel
   end
-  V = V - land_quality[k]
+  remaining_crop_yield -= land_quality[k]
   uA[k] = land_quality[k]
   land_quality[k] = 0
 end
@@ -606,10 +605,9 @@ land_quality[6] = land_quality[6] + uA[6]
 q1 = 2
 x = f_n_x(f3, 2)
 crop_yield_rate= x + 9
-if (Math.Floor(year_of_game / 7) * 7)
-  = year_of_game
+if (Math.Floor(year_of_game / 7) * 7) == year_of_game
   puts("Seven year locusts")
-  crop_yield_rate= Math.Floor(crop_yield_rate* 0.65)
+  crop_yield_rate = Math.Floor(crop_yield_rate* 0.65)
 end
 
 x1 = 0
