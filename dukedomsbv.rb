@@ -350,8 +350,7 @@ AgeOfRetirementCheckLabel :
 u1 = 0
 
 if K > 0
-  puts("The King demands twice the royal tax in")
-  puts("the hope to prevoke war.  Will you pay? ")
+  puts("The King demands twice the royal tax in the hope to prevoke war.  Will you pay? ")
   input = read_yes_no()
   K = 2
   if input == "N"
@@ -390,14 +389,6 @@ if food_per_peasant < 13
   peasants = peasants + starvations
 end # updates the ledger
 
-
-# X1 = X1 - 14
-# If X1 <= 4 Then
-# X1 = -X1 * -1
-# Else
-# X1 = -4 * -1
-# EndIf
-#
 overfed = min(4, food_per_peasant - 14)
 resentment = resentment - (3 * starvations) - (2 * overfed)
 
@@ -414,65 +405,64 @@ end
 LandBuySellLabel:
 
 crop_yield_rate = C1
-x = f_n_x(f3, 1)
-x1 = Math.Floor(2 * crop_yield_rate + x - 5)
-if x1 >= 4
-  x1 = -x1 * -1
-else
-  x1 = -4 * -1
-end
+#x = f_n_x(f3, 1)
+land_price = Math.Floor(2 * crop_yield_rate + rand(-1..1) - 5)
+land_price = [4,land_price].max
 
 LandToBuyLabel :
 
-puts("Land to buy at ")
-puts(x1)
-puts(" HL./HA. = ")
+puts("Land to buy at #{land_price} HL./HA. = ")
 read_number
-land_deals = -input * x1
+land_deals = -input * land_price
 
 if (-land_deals > grain)
-  insufficient_grain
+  insufficient_grain()
   Goto LandToBuyLabel
 end
 
+# When buying new land, it's always at 60%
 land_transactions = input
 land_quality[3] = land_quality[3] + input
 if input > 0
   Goto LandCheckLabel
 else
-  x2 = land_quality[1] + land_quality[2] + land_quality[3]
+  good_land = land_quality[1] + land_quality[2] + land_quality[3]
 end
 
-3.times do
-  x1 = x1 - 1
-  puts("Land to sell at ")
-  puts(x1)
-  puts(" HL./HA. = ")
-  land_to_sell = read_number()
-  if land_to_sell > x2
-    puts("But you only have ")
-    puts(x2)
-    puts(" HA. of good land")
-  else # enough to sell
-    land_deals = land_to_sell * x1
-    if land_deals <= 4000    # grain transactions for land < 4000 then DONE
-      Goto LandSaleCompleteLabel
-    else
-      puts("No buyers have that much grain try less")  # not that much to sell, try again
-    end
+sell_cycle_done = false
+sale_count = 0
+
+until sell_cycle_done do
+
+  puts("Land to sell at #{land_price} HL./HA. = ")
+
+  land_to_offer = read_number()
+
+  if land_to_offer > good_land                              # not enough to sell
+    puts("But you only have #{good_land} HA. of good land")
+  elsif (land_to_offer * land_price) > 4000
+    puts("No buyers have that much grain try less")         # not that much to sell, try again
+  else
+    land_to_sell = land_to_offer                            # a sale!
+    sell_cycle_done = true
+  end
+
+  sale_count += 1
+  land_price -= 1
+
+  if sale_count == 2 # and sell_cycle_done = false
+    land_to_sell = 0
+    land_deals = 0
+    sell_cycle_done = true
+    puts("Buyers have lost interest.")
   end
 end
 
-puts("Buyers have lost interest")
-land_to_sell = 0
-land_deals = 0
 
 LandSaleCompleteLabel :
 
-
-land_transactions = -input
-
-(1..3).reverse_each do |k|
+# only sell good land, 60, then 80, then 100
+(0..2).reverse_each do |k|
   if land_to_sell <= land_quality[k]
     Goto updateLandTablesCompleteLabel
   end
@@ -480,9 +470,8 @@ land_transactions = -input
   land_to_sell = land_to_sell - land_quality[k]
   land_quality[k] = 0
 
-
-puts("Land selling loop error")
-Program.End()
+# puts("Land selling loop error")
+# Program.End()
 
 updateLandTablesCompleteLabel :
 
@@ -498,47 +487,40 @@ if land < 10
   Goto PlayAgainLabel
 end
 
-if land_transactions < 0 && x1 < 4
+# If you sold land, and price was less than 4, King takes his cut
+if land_transactions < 0 && land_price < 4
   land_deals = Math.Floor(land_deals / 2)
-  puts("The High King appropriates half")
-  puts("of your earnings as punishment")
-  puts("for selling at such a low price")
+  puts("The High King appropriates half of your earnings as punishment for selling at such a low price")
 end
 
 grain = grain + land_deals
 
-#War with the King
+# War with the King
 
-if K != -2
+if king_sentiment != -2
   Goto LandToPlantLabel
 end
 
-x1 = Math.Floor(grain / 100)
+mercs = Math.Floor(grain / 100)
 
-puts("The King's army is about to attack")
-puts("your duchy")
-puts("at 100 HL. each (pay in advance)")
-puts("You have hired")
-puts(x1)
-puts(" foreign mercenaries")
+puts("The King's army is about to attack your duchy.")
+puts("At 100 HL. each (pay in advance), you have hired #{mercs} foreign mercenaries.")
 
-if ((8 * x1 + peasants) > 2399)
+if ((8 * mercs + peasants) > 2399)
   Goto YouWinLabel
 else
   Goto YouLostLabel
 end
 
 YouLostLabel :
-
-  puts("Your head is placed atop of the")
-puts("castle gate.")
+puts("Your head is placed atop of the castle gate.")
 Goto PlayAgainLabel
 
 YouWinLabel :
 
-  puts("Wipe the blood from the crown - you")
-puts("are High King! A nearby monarchy")
-puts("threatens war; how many ....")
+  puts("Wipe the blood from the crown - you are High King!")
+puts
+puts("A nearby monarchy threatens war; how many ....")
 puts("")
 Goto PlayAgainLabel
 
@@ -548,7 +530,7 @@ Goto PlayAgainLabel
 LandToPlantLabel :
 
   puts("Land to be planted = ")
-input= read_number
+input = read_number
 
 if input > land
   insufficient_land
@@ -566,20 +548,20 @@ if -seeding > grain
   Goto LandToPlantLabel
 end
 
-remaining_crop_yield = input
-grain = grain + seeding
+land_to_plant = input
+grain = grain + seeding # seeding is negative here
 
-[0..6]..each { |i| uA[i] = 0 }
+[0..5]..each { |i| uA[i] = 0 }
 
-[0..6].each do |k|
-  if remaining_crop_yield <= land_quality[k]
-    uA[k] = remaining_crop_yield
-    land_quality[k] = land_quality[k] - remaining_crop_yield
+[0..5].each do |k|
+  if land_to_plant <= land_quality[k]
+    uA[k] = land_to_plant
+    land_quality[k] = land_quality[k] - land_to_plant
     land_quality[1] = land_quality[1] + land_quality[2]
     land_quality[2] = 0
     Goto CropRotationLabel
   end
-  remaining_crop_yield -= land_quality[k]
+  land_to_plant -= land_quality[k]
   uA[k] = land_quality[k]
   land_quality[k] = 0
 end
@@ -616,11 +598,11 @@ x1 = 0
   x1 = x1 + uA[k] * (1.2 - 0.2 * k)
 end
 
-if crop_yield = 0
+if farmed = 0
   previous_year_crop_yield_rate = 0
   crop_yield_rate = 0
 else
-  previous_year_crop_yield_rate = Math.Floor((crop_yield_rate * (x1 / crop_yield)) * 100) / 100
+  previous_year_crop_yield_rate = Math.Floor((crop_yield_rate * (x1 / farmed)) * 100) / 100
   crop_yield_rate = previous_year_crop_yield_rate
 end
 
@@ -648,14 +630,8 @@ else
     if x1 > (peasants / 30)
       Goto WarLabel
     else
-      puts("The king requires ")
-      puts(x1)
-      puts(" peasants for")
-      puts("his estate and mines.  Will you supply")
-      puts("them (Y)es or pay ")
-      puts(x1 * 100)
-      puts(" HL. of")
-      puts("grain instead (N)o ? ")
+      puts("The king requires #{x1} peasants for his estate and mines.  Will you supply them (Y)es"
+      puts("   or pay #{x1 * 100} HL. of grain instead (N)o ? ")
       supply = read_yes_no()
 
       if supply == "N"
@@ -941,16 +917,16 @@ end
 castle_expenses = castle_expenses - 120
 grain = grain + castle_expenses
 
-if K < 0
+if king_sentiment < 0
   Goto updateCounterAndContinueLabel
 end
 
-x1 = -Math.Floor(land / 2)
+x1 = -Math.Floor(land / 2) # half of land, negative
 
-if K < 2
-  x1 = -x1 * -1
+if king_sentiment < 2
+  x1 = -x1 * -1      # tax increment is half of land
 else
-  x1 = -2 * x1 * -1
+  x1 = -2 * x1 * -1  # tax increment is land
 end
 
 if -x1 <= grain

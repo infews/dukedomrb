@@ -33,8 +33,11 @@ module Dukedom
         Crop Yield Rate           <%= @ledger.crop_yield_rate %> HL/HA
         Land at start of year     <%= @ledger.previous_year_land %>
         Bought and sold           <%= @ledger.land_transactions %>
-        == PLACEHOLDER FOR LAND HEALTH ==
         
+        <%= header("Field Quality") %>
+        100%    80%    60%    40%    20%   Depleted                        
+        <%= @ledger.fields.report %>
+
         <%= header("Grain") %>
         Grain at start of year    <%= @ledger.previous_year_grain %>
         Used for food             <%= @ledger.grain_for_food      %>

@@ -15,53 +15,14 @@ module Dukedom
         expect(ledger.land).to eq(600)
       end
 
+      it "the land is allocated to the right fields"
+
       it "there is the right amount of grain" do
         expect(ledger.grain).to eq(4177)
       end
 
       it "there is a crop yield rate" do
         expect(ledger.crop_yield_rate).to eq(3.95)
-      end
-    end
-
-    describe "#over?" do
-      context "when there are enough peasants" do
-        before do
-          ledger.peasants = 33
-        end
-
-        it "returns false" do
-          expect(ledger.game_over?).to eq(false)
-        end
-      end
-      context "when there not are enough peasants" do
-        before do
-          ledger.peasants = 32
-        end
-
-        it "returns true" do
-          expect(ledger.game_over?).to eq(true)
-        end
-      end
-
-      context "when there is enough land" do
-        before do
-          ledger.land = 200
-        end
-
-        it "returns false" do
-          expect(ledger.game_over?).to eq(false)
-        end
-      end
-
-      context "when there is not enough land" do
-        before do
-          ledger.land = 199
-        end
-
-        it "returns true" do
-          expect(ledger.game_over?).to eq(true)
-        end
       end
     end
 
@@ -124,6 +85,16 @@ module Dukedom
           ledger.seized_land = 15
           expect(ledger.seized_land).to eq(15)
         end
+
+        describe "#buy_land" do
+          it "new land is low quality"
+          it "adjusts the total land properly"
+        end
+
+        describe "#sell_land" do
+          it "sells land from the 60% field, then the 80% field, then the 100% field"
+          it "adjusts the total land properly"
+        end
       end
 
       context "for grain" do
@@ -183,7 +154,7 @@ module Dukedom
       end
     end
 
-    describe "update_for_new_year" do
+    describe "#update_for_new_year" do
       before do
         ledger.starvations = 1
         ledger.levy = 1
