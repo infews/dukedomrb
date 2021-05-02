@@ -16,38 +16,13 @@ puts
 puts "Ruby Version".red + " v#{Dukedom::VERSION}"
 puts
 
-duke = Dukedom::Duke.new
-ledger = Dukedom::Ledger.new
-majordomo = Dukedom::MajorDomo.new(duke, ledger)
-
-# 3. Choose a Reporter
-summary_reporter = Dukedom::SummaryReporter.new(ledger)
-detail_reporter = Dukedom::DetailReporter.new(ledger)
-
-# 5. Game.start
-# until Dukedom::Ledger.game_over? do
-# 6. Report
-puts summary_reporter.report
-puts
-puts detail_reporter.report
-
-# 7. Make a FoodMinister
-food_minister = Dukedom::FoodMinister.new
-food, starvations = food_minister.how_much_grain_for_food(duke, ledger.grain, ledger.peasants)
-majordomo.update_food_amounts(food, starvations)
-
-puts "Food: #{food}"
-puts "Starvations: #{starvations}"
-
-# 8. Update Ledger / End check
-# 9. Make a LandMinister
-# 10. Update Ledger / End check
-# 10.5 => War with king? WarMinister
-# 11. Make a FarmingMinister
-# 12. Update Ledger
-# 14. Process Disease Stuff
-# 15. Increment Year
-# 16. Retirement check
-# end
-
-# 18. Why did we break?
+stop_playing = false
+until stop_playing
+  Dukedom::Game.play
+  puts "Play again? (Y/N) "
+  answer = gets
+  if ["N","n","no","No"].include?(answer)
+    stop_playing = true
+  end
+  puts
+end

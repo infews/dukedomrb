@@ -8,15 +8,9 @@ module Dukedom
     let(:ledger) { Ledger.new }
     let(:majordomo) { MajorDomo.new(ledger, duke) }
 
-    describe "#update_food_choice" do
+    describe "#update_resentment_due_to_food" do
       before do
-        majordomo.update_food_amounts(1200, 8)
-      end
-      it "updates the grain stores" do
-        expect(ledger.grain_for_food).to eq(1200)
-      end
-      it "updates the peasant count" do
-        expect(ledger.starvations).to eq(8)
+        majordomo.update_resentment_due_to_food
       end
       it "calculates resentment" do
         expect(majordomo.resentment).to eq(28)
@@ -72,7 +66,12 @@ module Dukedom
 
       context "when there is not enough land" do
         before do
-          ledger.land = 199
+          ledger.fields.at_100 = 199
+          ledger.fields.at_80 = 0
+          ledger.fields.at_60 = 0
+          ledger.fields.at_40 = 0
+          ledger.fields.at_20 = 0
+          ledger.fields.at_0 = 0
         end
         it "the game is over" do
           expect(majordomo.game_over?).to eq(true)

@@ -13,8 +13,7 @@ module Dukedom
     end
 
     def header(name)
-      text = ""
-      text << "#{name} Report".underline.yellow
+      text = "#{name} Report".underline.yellow
       text << "\n"
       text
     end
@@ -35,8 +34,12 @@ module Dukedom
         Bought and sold           <%= @ledger.land_transactions %>
         
         <%= header("Field Quality") %>
-        100%    80%    60%    40%    20%   Depleted                        
-        <%= @ledger.fields.report %>
+        100%  <%= @ledger.fields.at_100 %>    
+         80%  <%= @ledger.fields.at_80 %>  
+         60%  <%= @ledger.fields.at_60 %>
+         40%  <%= @ledger.fields.at_40 %>  
+         20%  <%= @ledger.fields.at_20 %> 
+          0%  <%= @ledger.fields.at_0 %>                      
 
         <%= header("Grain") %>
         Grain at start of year    <%= @ledger.previous_year_grain %>

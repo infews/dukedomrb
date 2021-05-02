@@ -4,9 +4,9 @@ module Dukedom
       :starvations, :levy, :war_casualties, :looting_victims, :disease_victims,
       :natural_deaths, :births, :seized_land, :grain_for_food,
       :grain_for_land, :seeding, :rat_losses, :grain_for_mercs, :seized_grain, :crop_yield,
-      :castle_expenses, :royal_tax
+      :castle_expenses, :royal_tax, :crop_yield_rate
 
-    attr_reader :fields, :previous_year_peasants, :previous_year_land, :land_transactions, :previous_year_grain, :crop_yield_rate
+    attr_reader :fields, :previous_year_peasants, :previous_year_land, :land_transactions, :previous_year_grain
 
     def initialize
       @year = 0
@@ -34,9 +34,9 @@ module Dukedom
       reset_annual_events
     end
 
-    def buy_land(additional_land)
+    def buy_land(additional_land, land_price)
       @land_transactions += additional_land
-      # TODO: bought land always starts at 60
+      @grain_for_land  += (additional_land * land_price)
     end
 
     def sell_land(existing_land)

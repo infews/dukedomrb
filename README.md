@@ -88,11 +88,11 @@ Port of (link) to Ruby for fun and understanding
 
 # TODO
 
-- Fields 
+x Fields 
   - at_100, at_80, at_60, at_40, at_20, at_0
-- Ledger has a Fields
-- DetailReporter shows land %'s
-- Stitch together game with report each year
+x Ledger has a Fields
+x DetailReporter shows land %'s
+x Stitch together game with report each year
   - The game can sort of be playable...until out of grain
 - LandMinister buys land 
   - Buy should put land in the right field

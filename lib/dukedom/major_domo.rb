@@ -9,12 +9,9 @@ module Dukedom
       @resentment = 0
     end
 
-    def update_food_amounts(grain_for_food, starvations)
-      @ledger.grain_for_food = grain_for_food
-      @ledger.starvations = starvations
-
-      overfed = [4, (grain_for_food / @ledger.peasants).floor - 14].min
-      @resentment += (3 * starvations) - (2 * overfed)
+    def update_resentment_due_to_food
+      overfed = [4, (@ledger.grain_for_food / @ledger.peasants).floor - 14].min
+      @resentment += (3 * @ledger.starvations) - (2 * overfed)
     end
 
     def game_over?

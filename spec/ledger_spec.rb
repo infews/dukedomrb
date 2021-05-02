@@ -74,7 +74,7 @@ module Dukedom
       context "for land" do
         it "tracks land bought and sold" do
           expect(ledger.land_transactions).to eq(0)
-          ledger.buy_land(15)
+          ledger.buy_land(15, 4)
           expect(ledger.land_transactions).to eq(15)
           ledger.sell_land(5)
           expect(ledger.land_transactions).to eq(10)
@@ -86,9 +86,21 @@ module Dukedom
           expect(ledger.seized_land).to eq(15)
         end
 
+        it "tracks the crop yield rate" do
+          expect(ledger.crop_yield_rate).to eq(3.95)
+          ledger.crop_yield_rate = 15
+          expect(ledger.crop_yield_rate).to eq(15)
+        end
+
         describe "#buy_land" do
-          it "new land is low quality"
-          it "adjusts the total land properly"
+          it "saves the land transactions" do
+            ledger.buy_land(200, 4)
+
+            expect(ledger.land_transactions).to eq(200)
+            expect(ledger.grain_for_land).to eq(800)
+          end
+
+          it "saves the amount of grain for the land transactions"
         end
 
         describe "#sell_land" do
@@ -164,7 +176,7 @@ module Dukedom
         ledger.natural_deaths = 1
         ledger.births = 1
 
-        ledger.buy_land(2)
+        ledger.buy_land(2,4)
         ledger.sell_land(3)
         ledger.seized_land = 10
 
